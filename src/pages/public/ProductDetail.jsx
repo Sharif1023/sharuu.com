@@ -1,0 +1,42 @@
+import { Check, ChevronDown, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Truck } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import Markdown from 'react-markdown';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import ProductCard from '../../components/ProductCard';
+import { useCart } from '../../contexts/CartContext';
+import { useStore } from '../../contexts/StoreContext';
+import { discountPercent, effectiveOriginalPrice, effectivePrice, findMatchingVariant, firstAvailableSelection, galleryImages, optionValueAvailable } from '../../lib/product';
+import { cn, formatMoney } from '../../lib/utils';
+
+export default function ProductDetail() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const { publicProducts, categories, settings } = useStore();
+  const { addToCart } = useCart();
+  const product = publicProducts.find(item => item.slug === slug || item.id === slug);
+  const [selectedOptions, setSelectedOptions] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [mainImage, setMainImage] = useState('');
+  const [zoom, setZoom] = useState({ active:false,x:50,y:50 });
+  const [message, setMessage] = useState('');
+  const variant = product ? findMatchingVariant(product, selectedOptions) : undefined;
+  const images = useMemo(() => product ? galleryImages(product, variant) : [], [product, variant]);
+  const stock = product ? (product.hasVariants ? Number(variant?.stock || 0) : Number(product.stock || 0)) : 0;
+  const price = product ? effectivePrice(product, variant) : 0;
+  const original = product ? effectiveOriginalPrice(product, variant) : 0;
+  const discount = product ? discountPercent(product, variant) : 0;
+
+  useEffect(() => { if (!product) return; setSelectedOptions(firstAvailableSelection(product)); setQuantity(1); setMessage(''); }, [product?.id]);
+  useEffect(() => { if (images[0]) setMainImage(images[0]); }, [product?.id, variant?.id]);
+  if (!product) return <main className="page container"><div className="empty-state"><h1>Product not found</h1><Link className="btn btn-primary" to="/shop">Back to shop</Link></div></main>;
+  const category = categories.find(item => item.id === product.categoryId);
+  const subcategory = categories.find(item => item.id === product.subcategoryId);
+  const related = publicProducts.filter(item => item.id !== product.id && (product.subcategoryId ? item.subcategoryId === product.subcategoryId : item.categoryId === product.categoryId)).slice(0,4);
+  const selectionComplete = !product.hasVariants || (product.options || []).every(option => selectedOptions[option.id]);
+  const available = product.hasVariants ? Boolean(variant && (variant.stock > 0 || variant.allowBackorder)) : product.stock > 0;
+  const add = goCart => { if (!selectionComplete || !available) { setMessage(!selectionComplete ? 'Please select every required option.' : 'This combination is unavailable.'); return; } const result = addToCart({ product, variant, selectedOptions, quantity }); setMessage(result.ok ? 'Product added to cart.' : result.message); if (result.ok && goCart) navigate('/cart'); };
+  const move = event => { const rect = event.currentTarget.getBoundingClientRect(); setZoom({ active:true,x:((event.clientX-rect.left)/rect.width)*100,y:((event.clientY-rect.top)/rect.height)*100 }); };
+  const grouped = (product.specifications || []).reduce((result,item) => ({ ...result,[item.group || 'General']:[...(result[item.group || 'General'] || []),item] }),{});
+
+  return <main className="product-page container"><div className="breadcrumbs"><Link to="/">Home</Link><span>/</span><Link to={`/shop?category=${category?.id || ''}`}>{category?.name}</Link>{subcategory && <><span>/</span><span>{subcategory.name}</span></>}</div><div className="product-detail-grid"><section className="product-gallery"><div className="product-primary-image" onMouseMove={move} onMouseLeave={() => setZoom(previous => ({...previous,active:false}))}><img src={mainImage} alt={product.name} style={{ transform:zoom.active?'scale(1.8)':'scale(1)',transformOrigin:`${zoom.x}% ${zoom.y}%` }}/>{discount > 0 && <span className="discount-badge large">-{discount}% OFF</span>}</div>{images.length > 1 && <div className="thumbnail-row">{images.map(image => <button key={image} className={cn(mainImage===image&&'active')} onClick={() => setMainImage(image)}><img src={image} alt="Product thumbnail"/></button>)}</div>}</section><section className="product-info"><span className="eyebrow">{product.brand} · {category?.name}</span><h1>{product.name}</h1><div className="price-row product-price"><strong>{formatMoney(price,settings?.currencySymbol)}</strong>{original>price&&<del>{formatMoney(original,settings?.currencySymbol)}</del>}{discount>0&&<span className="saving">Save {discount}%</span>}</div><p className="product-code">SKU: {variant?.sku || product.productCode}</p><div className="markdown"><Markdown>{product.description}</Markdown></div>{(product.options || []).map(option => <div className="option-block" key={option.id}><div className="option-label"><span>{option.name}</span><strong>{option.values.find(value => value.value===selectedOptions[option.id])?.label || 'Select'}</strong></div>{option.displayType==='dropdown'?<select value={selectedOptions[option.id]||''} onChange={event => setSelectedOptions(previous => ({...previous,[option.id]:event.target.value}))}><option value="">Select {option.name}</option>{option.values.map(value => <option key={value.id} value={value.value}>{value.label}</option>)}</select>:<div className="option-values">{option.values.map(value => { const possible=optionValueAvailable(product,option.id,value.value,selectedOptions); return <button key={value.id} disabled={!possible} className={cn(option.displayType==='color'&&'color-option',selectedOptions[option.id]===value.value&&'selected')} onClick={() => setSelectedOptions(previous => ({...previous,[option.id]:value.value}))}>{option.displayType==='color'&&<i style={{background:value.hexColor||value.value}}/>}<span>{value.label}</span>{selectedOptions[option.id]===value.value&&<Check size={14}/>}</button>; })}</div>}</div>)}<div className="availability"><span className={available?'in-stock':'out-stock'}>{available?`In stock${stock<6?` · Only ${stock} left`:''}`:'Out of stock'}</span></div><div className="quantity-row"><span>Quantity</span><div><button onClick={() => setQuantity(value => Math.max(1,value-1))}><Minus size={16}/></button><strong>{quantity}</strong><button onClick={() => setQuantity(value => Math.min(stock||1,value+1))}><Plus size={16}/></button></div></div>{message&&<div className="notice">{message}</div>}<div className="purchase-actions"><button className="btn btn-primary" onClick={() => add(false)} disabled={!available}><ShoppingBag size={19}/>Add to Cart</button><button className="btn btn-accent" onClick={() => add(true)} disabled={!available}>Buy Now</button><button className="icon-btn large"><Heart/></button></div><div className="trust-row"><div><Truck/><span><strong>Delivery</strong><small>{product.shippingInfo?.deliveryNote||'2–5 working days'}</small></span></div><div><ShieldCheck/><span><strong>Secure order</strong><small>Stock-aware checkout</small></span></div></div><div className="accordion"><details open><summary>Product Details <ChevronDown/></summary><div className="markdown"><Markdown>{product.productDetails||product.description}</Markdown></div></details>{Object.keys(grouped).length>0&&<details><summary>Specifications <ChevronDown/></summary><div>{Object.entries(grouped).map(([group,items])=><div className="spec-group" key={group}><h4>{group}</h4>{items.map(item=><div key={item.id}><span>{item.label}</span><strong>{item.value}</strong></div>)}</div>)}</div></details>}{product.sizeChart?.rows?.length>0&&<details><summary>{product.sizeChart.title||'Size Chart'} <ChevronDown/></summary><div className="table-wrap"><table><thead><tr>{product.sizeChart.columns.map(column=><th key={column}>{column}</th>)}</tr></thead><tbody>{product.sizeChart.rows.map((row,index)=><tr key={index}>{product.sizeChart.columns.map(column=><td key={column}>{row[column]}</td>)}</tr>)}</tbody></table></div></details>}</div></section></div>{related.length>0&&<section className="section related-section"><div className="section-heading"><div><span className="eyebrow">Same collection</span><h2>You May Also Like</h2></div></div><div className="product-grid">{related.map(item=><ProductCard key={item.id} product={item}/>)}</div></section>}</main>;
+}

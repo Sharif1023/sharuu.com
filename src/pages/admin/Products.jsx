@@ -1,0 +1,15 @@
+import { Copy, Edit3, Plus, Search, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useStore } from '../../contexts/StoreContext';
+import { primaryImage } from '../../lib/product';
+import { formatMoney, makeId } from '../../lib/utils';
+
+export default function Products() {
+  const { products,categories,settings,loadAdmin,adminLoaded,saveProduct,deleteProduct }=useStore();
+  const[query,setQuery]=useState(''); const[category,setCategory]=useState('');
+  useEffect(()=>{if(!adminLoaded)loadAdmin().catch(()=>{});},[adminLoaded,loadAdmin]);
+  const rows=useMemo(()=>products.filter(product=>`${product.name} ${product.productCode}`.toLowerCase().includes(query.toLowerCase())&&(!category||product.categoryId===category||product.subcategoryId===category)),[products,query,category]);
+  const duplicate=async product=>{const id=makeId('product');await saveProduct({...product,id,slug:`${product.slug}-copy-${Date.now()}`,name:`${product.name} Copy`,productCode:`${product.productCode}-COPY`,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),variants:(product.variants||[]).map(item=>({...item,id:makeId('variant'),sku:`${item.sku}-COPY`}))});};
+  return <div><div className="admin-page-heading"><div><span className="eyebrow">Catalogue</span><h1>Products</h1><p>Manage simple and variable products.</p></div><Link className="btn btn-primary" to="/admin/products/new"><Plus size={17}/>Add Product</Link></div><div className="admin-toolbar"><label className="search-field"><Search size={17}/><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Search products..."/></label><select value={category} onChange={event=>setCategory(event.target.value)}><option value="">All categories</option>{categories.map(item=><option key={item.id} value={item.id}>{item.parentId?'— ':''}{item.name}</option>)}</select></div><section className="admin-panel table-panel"><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>{rows.map(product=><tr key={product.id}><td><div className="table-product"><img src={primaryImage(product)} alt=""/><span><strong>{product.name}</strong><small>{product.productCode} · {product.variants?.length||0} variants</small></span></div></td><td>{categories.find(item=>item.id===(product.subcategoryId||product.categoryId))?.name}</td><td>{formatMoney(product.price,settings?.currencySymbol)}</td><td>{product.stock}</td><td><span className={`status-pill ${product.status}`}>{product.status}</span></td><td><div className="table-actions"><Link className="icon-btn" to={`/admin/products/${product.id}`}><Edit3 size={16}/></Link><button className="icon-btn" onClick={()=>duplicate(product)}><Copy size={16}/></button><button className="icon-btn danger" onClick={()=>confirm('Delete this product?')&&deleteProduct(product.id)}><Trash2 size={16}/></button></div></td></tr>)}</tbody></table></div></section></div>;
+}
