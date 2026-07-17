@@ -330,93 +330,92 @@ export default function PublicLayout() {
             </span>
           </Link>
 
-          {/* Desktop Categories */}
-          <nav className="hidden min-w-0 flex-wrap items-center justify-center gap-1 lg:flex">
-            <Link
-              to="/shop"
-              className={[
-                'mr-1 inline-flex min-h-10',
-                'shrink-0 items-center gap-2',
-                'rounded-xl px-4 py-2',
-                'text-xs font-black',
-                'transition duration-200',
-                location.pathname ===
-                  '/shop' &&
-                !activeCategoryId
-                  ? 'bg-[var(--secondary-color)] text-[var(--on-secondary)] shadow-md'
-                  : 'bg-[var(--primary-color)] text-[var(--on-primary)] hover:bg-[var(--secondary-color)] hover:text-[var(--on-secondary)]'
-              ].join(' ')}
-            >
-              <Store size={16} />
+        {/* Desktop Categories */}
+<nav className="hidden min-w-0 flex-wrap items-center justify-center gap-1 lg:flex">
+  {/* All Products */}
+  <Link
+    to="/shop"
+    className={[
+      'mr-1 inline-flex min-h-10',
+      'shrink-0 items-center gap-2',
+      'rounded-xl px-4 py-2',
+      'text-xs font-black !text-white',
+      'transition duration-200',
+      location.pathname === '/shop' && !activeCategoryId
+        ? 'bg-[var(--secondary-color)] shadow-md'
+        : 'bg-[var(--primary-color)] hover:bg-[var(--secondary-color)]'
+    ].join(' ')}
+  >
+    <Store
+      size={16}
+      className="shrink-0 !text-white"
+    />
 
-              <span>
-                All Products
-              </span>
-            </Link>
+    <span className="!text-white">
+      All Products
+    </span>
+  </Link>
 
-            {topCategories.map(
-              category => {
-                const subcategories =
-                  getSubcategories(
-                    category.id
-                  );
+  {/* Main Categories */}
+  {topCategories.map(category => {
+    const subcategories = getSubcategories(
+      category.id
+    );
 
-                const categoryIsActive =
-                  String(
-                    activeCategoryId
-                  ) ===
-                    String(category.id) ||
-                  subcategories.some(
-                    child =>
-                      String(child.id) ===
-                      String(
-                        activeCategoryId
-                      )
-                  );
+    const categoryIsActive =
+      String(activeCategoryId) ===
+        String(category.id) ||
+      subcategories.some(
+        child =>
+          String(child.id) ===
+          String(activeCategoryId)
+      );
 
-                return (
-                  <div
-                    key={category.id}
-                    className="group relative"
-                  >
-                    <Link
-                      to={`/shop?category=${category.id}`}
-                      className={[
-                        'relative flex min-h-10',
-                        'shrink-0 items-center',
-                        'gap-1.5 rounded-xl',
-                        'px-3 py-2 text-xs',
-                        'font-extrabold transition',
-                        categoryIsActive
-                          ? 'bg-[var(--secondary-soft)] text-[var(--secondary-color)]'
-                          : 'text-slate-600 hover:bg-[var(--secondary-soft)] hover:text-[var(--secondary-color)]'
-                      ].join(' ')}
-                    >
-                      <span>
-                        {category.name}
-                      </span>
+    return (
+      <div
+        key={category.id}
+        className="group relative"
+      >
+        {/* Category Link */}
+        <Link
+          to={`/shop?category=${category.id}`}
+          className={[
+            'relative flex min-h-10',
+            'shrink-0 items-center',
+            'gap-1.5 rounded-xl',
+            'px-3 py-2 text-xs',
+            'font-extrabold transition duration-200',
+            categoryIsActive
+              ? 'bg-[var(--secondary-soft)] text-[var(--secondary-color)]'
+              : 'text-slate-600 hover:bg-[var(--secondary-soft)] hover:text-[var(--secondary-color)]'
+          ].join(' ')}
+        >
+          <span>
+            {category.name}
+          </span>
 
-                      {subcategories.length >
-                        0 && (
-                        <ChevronDown
-                          size={14}
-                          className="transition-transform duration-200 group-hover:rotate-180"
-                        />
-                      )}
+          {subcategories.length > 0 && (
+            <ChevronDown
+              size={14}
+              className="shrink-0 transition-transform duration-200 group-hover:rotate-180"
+            />
+          )}
 
-                      <span
-                        className={[
-                          'absolute bottom-0',
-                          'left-3 right-3 h-0.5',
-                          'origin-center rounded-full',
-                          'bg-[var(--secondary-color)]',
-                          'transition-transform',
-                          categoryIsActive
-                            ? 'scale-x-100'
-                            : 'scale-x-0 group-hover:scale-x-100'
-                        ].join(' ')}
-                      />
-                    </Link>
+          {/* Active underline */}
+          <span
+            className={[
+              'absolute bottom-0',
+              'left-3 right-3 h-0.5',
+              'origin-center rounded-full',
+              'bg-[var(--secondary-color)]',
+              'transition-transform duration-200',
+              categoryIsActive
+                ? 'scale-x-100'
+                : 'scale-x-0 group-hover:scale-x-100'
+            ].join(' ')}
+          />
+        </Link>
+
 
                     {/* Category Dropdown */}
                     {subcategories.length >
