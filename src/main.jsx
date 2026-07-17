@@ -6,6 +6,7 @@ import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { StoreProvider } from './contexts/StoreContext';
 import './styles.css';
+import './tailwind.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
