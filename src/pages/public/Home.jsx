@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  BadgeCheck,
-  Headphones,
-  RefreshCcw,
-  Truck,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../../components/ProductCard";
@@ -79,7 +73,7 @@ export default function Home() {
         @keyframes homePageEnter {
           from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(12px);
           }
 
           to {
@@ -88,25 +82,379 @@ export default function Home() {
           }
         }
 
-        .home-page-enter {
-          animation: homePageEnter 600ms cubic-bezier(.22, 1, .36, 1) both;
+        @keyframes homeHeroImageEnter {
+          from {
+            opacity: 0;
+            transform: scale(1.07);
+          }
+
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
 
+        @keyframes homeHeroContentEnter {
+          from {
+            opacity: 0;
+            transform: translateY(36px) scale(0.985);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .home-page-enter {
+          animation: homePageEnter 800ms cubic-bezier(.16, 1, .3, 1) both;
+        }
+
+        /* Hero image আগে আসবে */
+        .home-hero-image {
+          opacity: 0;
+          transform: scale(1.07);
+          animation: homeHeroImageEnter 1800ms cubic-bezier(.16, 1, .3, 1)
+            80ms forwards;
+          will-change: opacity, transform;
+        }
+
+        /* Hero text একটার পর একটা আসবে */
+        .home-hero-item {
+          opacity: 0;
+          transform: translateY(36px) scale(0.985);
+          animation: homeHeroContentEnter 1150ms cubic-bezier(.16, 1, .3, 1)
+            forwards;
+          will-change: opacity, transform;
+        }
+
+        .home-hero-eyebrow {
+          animation-delay: 360ms;
+        }
+
+        .home-hero-title {
+          animation-delay: 620ms;
+        }
+
+        .home-hero-subtitle {
+          animation-delay: 880ms;
+        }
+
+        .home-hero-button {
+          animation-delay: 1120ms;
+        }
+
+        /* সম্পূর্ণ section ধীরে উঠবে */
         .home-reveal {
           opacity: 0;
-          transform: translateY(28px) scale(.992);
-          filter: blur(3px);
+          transform: translateY(50px) scale(0.985);
           transition:
-            opacity 650ms cubic-bezier(.22, 1, .36, 1),
-            transform 650ms cubic-bezier(.22, 1, .36, 1),
-            filter 650ms cubic-bezier(.22, 1, .36, 1);
-          will-change: opacity, transform, filter;
+            opacity 1100ms cubic-bezier(.16, 1, .3, 1),
+            transform 1250ms cubic-bezier(.16, 1, .3, 1);
+          will-change: opacity, transform;
         }
 
         .home-reveal.is-visible {
           opacity: 1;
           transform: translateY(0) scale(1);
-          filter: blur(0);
+        }
+
+        /* Section heading stagger */
+        .home-reveal .home-heading-eyebrow,
+        .home-reveal .home-heading-title,
+        .home-reveal .home-heading-link,
+        .home-reveal .home-arrival-description {
+          opacity: 0;
+          transform: translateY(24px);
+          transition:
+            opacity 900ms cubic-bezier(.16, 1, .3, 1),
+            transform 1050ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .home-reveal .home-heading-eyebrow {
+          transition-delay: 160ms;
+        }
+
+        .home-reveal .home-heading-title {
+          transition-delay: 320ms;
+        }
+
+        .home-reveal .home-heading-link,
+        .home-reveal .home-arrival-description {
+          transition-delay: 500ms;
+        }
+
+        .home-reveal.is-visible .home-heading-eyebrow,
+        .home-reveal.is-visible .home-heading-title,
+        .home-reveal.is-visible .home-heading-link,
+        .home-reveal.is-visible .home-arrival-description {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Category card আগে, image তারপর text */
+        .home-category-card {
+          opacity: 0;
+          transform: translateY(42px) scale(0.97);
+          transition:
+            opacity 1000ms cubic-bezier(.16, 1, .3, 1),
+            transform 1150ms cubic-bezier(.16, 1, .3, 1),
+            box-shadow 500ms ease;
+          transition-delay: var(--item-delay, 0ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-category-card {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-category-image {
+          opacity: 0;
+          transform: translateY(16px) scale(1.075);
+          transition:
+            opacity 1200ms cubic-bezier(.16, 1, .3, 1),
+            transform 1450ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 180ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-category-image {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-category-title,
+        .home-category-description {
+          opacity: 0;
+          transform: translateY(22px);
+          transition:
+            opacity 850ms cubic-bezier(.16, 1, .3, 1),
+            transform 1000ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .home-category-title {
+          transition-delay: calc(var(--item-delay, 0ms) + 620ms);
+        }
+
+        .home-category-description {
+          transition-delay: calc(var(--item-delay, 0ms) + 800ms);
+        }
+
+        .home-reveal.is-visible .home-category-title,
+        .home-reveal.is-visible .home-category-description {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Featured ProductCard animation */
+        .home-product-sequence {
+          opacity: 0;
+          transform: translateY(46px) scale(0.97);
+          transition:
+            opacity 1000ms cubic-bezier(.16, 1, .3, 1),
+            transform 1200ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: var(--item-delay, 0ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-product-sequence {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-product-sequence img {
+          opacity: 0;
+          transform: translateY(18px) scale(1.065);
+          transition:
+            opacity 1200ms cubic-bezier(.16, 1, .3, 1),
+            transform 1450ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 180ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-product-sequence img {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-product-sequence :is(h1, h2, h3, h4) {
+          opacity: 0;
+          transform: translateY(22px);
+          transition:
+            opacity 850ms cubic-bezier(.16, 1, .3, 1),
+            transform 1000ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 650ms);
+        }
+
+        .home-product-sequence p {
+          opacity: 0;
+          transform: translateY(18px);
+          transition:
+            opacity 800ms cubic-bezier(.16, 1, .3, 1),
+            transform 950ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 790ms);
+        }
+
+        .home-product-sequence span {
+          opacity: 0;
+          transform: translateY(16px);
+          transition:
+            opacity 800ms cubic-bezier(.16, 1, .3, 1),
+            transform 950ms cubic-bezier(.16, 1, .3, 1),
+            background-color 350ms ease,
+            color 350ms ease;
+          transition-delay: calc(var(--item-delay, 0ms) + 900ms);
+        }
+
+        .home-product-sequence button {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+          transition:
+            opacity 800ms cubic-bezier(.16, 1, .3, 1),
+            transform 950ms cubic-bezier(.16, 1, .3, 1),
+            background-color 350ms ease,
+            color 350ms ease,
+            box-shadow 350ms ease;
+          transition-delay: calc(var(--item-delay, 0ms) + 1020ms);
+        }
+
+        .home-reveal.is-visible .home-product-sequence :is(h1, h2, h3, h4),
+        .home-reveal.is-visible .home-product-sequence p,
+        .home-reveal.is-visible .home-product-sequence span,
+        .home-reveal.is-visible .home-product-sequence button {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        /* Branding banner image আগে আসবে */
+        .home-banner-card {
+          opacity: 0;
+          transform: translateY(46px) scale(0.975);
+          transition:
+            opacity 1050ms cubic-bezier(.16, 1, .3, 1),
+            transform 1200ms cubic-bezier(.16, 1, .3, 1),
+            box-shadow 500ms ease;
+          transition-delay: var(--item-delay, 0ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-banner-card {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-banner-image {
+          opacity: 0;
+          transform: scale(1.075);
+          transition:
+            opacity 1250ms cubic-bezier(.16, 1, .3, 1),
+            transform 1500ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 180ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-banner-image {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .home-banner-kicker,
+        .home-banner-title,
+        .home-banner-subtitle,
+        .home-banner-button {
+          opacity: 0;
+          transform: translateY(22px);
+          transition:
+            opacity 850ms cubic-bezier(.16, 1, .3, 1),
+            transform 1000ms cubic-bezier(.16, 1, .3, 1),
+            background-color 350ms ease,
+            color 350ms ease;
+        }
+
+        .home-banner-kicker {
+          transition-delay: calc(var(--item-delay, 0ms) + 580ms);
+        }
+
+        .home-banner-title {
+          transition-delay: calc(var(--item-delay, 0ms) + 720ms);
+        }
+
+        .home-banner-subtitle {
+          transition-delay: calc(var(--item-delay, 0ms) + 860ms);
+        }
+
+        .home-banner-button {
+          transition-delay: calc(var(--item-delay, 0ms) + 1000ms);
+        }
+
+        .home-reveal.is-visible .home-banner-kicker,
+        .home-reveal.is-visible .home-banner-title,
+        .home-reveal.is-visible .home-banner-subtitle,
+        .home-reveal.is-visible .home-banner-button {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* New arrival image তারপর লেখা */
+        .home-arrival-card {
+          opacity: 0;
+          transform: translateY(46px) scale(0.975);
+          transition:
+            opacity 1050ms cubic-bezier(.16, 1, .3, 1),
+            transform 1200ms cubic-bezier(.16, 1, .3, 1),
+            box-shadow 500ms ease;
+          transition-delay: var(--item-delay, 0ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-arrival-card {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-arrival-image {
+          opacity: 0;
+          transform: translateY(16px) scale(1.075);
+          transition:
+            opacity 1250ms cubic-bezier(.16, 1, .3, 1),
+            transform 1500ms cubic-bezier(.16, 1, .3, 1);
+          transition-delay: calc(var(--item-delay, 0ms) + 180ms);
+          will-change: opacity, transform;
+        }
+
+        .home-reveal.is-visible .home-arrival-image {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .home-arrival-kicker,
+        .home-arrival-title,
+        .home-arrival-subtitle {
+          opacity: 0;
+          transform: translateY(20px);
+          transition:
+            opacity 850ms cubic-bezier(.16, 1, .3, 1),
+            transform 1000ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .home-arrival-kicker {
+          transition-delay: calc(var(--item-delay, 0ms) + 600ms);
+        }
+
+        .home-arrival-title {
+          transition-delay: calc(var(--item-delay, 0ms) + 760ms);
+        }
+
+        .home-arrival-subtitle {
+          transition-delay: calc(var(--item-delay, 0ms) + 920ms);
+        }
+
+        .home-reveal.is-visible .home-arrival-kicker,
+        .home-reveal.is-visible .home-arrival-title,
+        .home-reveal.is-visible .home-arrival-subtitle {
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .home-theme-link {
@@ -125,21 +473,7 @@ export default function Home() {
         }
 
         .home-secondary-button:hover {
-          filter: brightness(1.08);
-        }
-
-        .home-benefit-card:hover {
-          border-color: #cbd5e1;
-        }
-
-        .home-benefit-icon {
-          background: #f1f5f9;
-          color: #0f172a;
-        }
-
-        .home-benefit-card:hover .home-benefit-icon {
-          background: #0f172a;
-          color: #ffffff;
+          opacity: 0.92;
         }
 
         .home-banner-button {
@@ -151,68 +485,162 @@ export default function Home() {
           color: #ffffff;
         }
 
+        @media (hover: hover) {
+          .home-category-card:hover,
+          .home-product-sequence:hover,
+          .home-arrival-card:hover {
+            transform: translateY(-7px) scale(1.008);
+          }
+
+          .home-banner-card:hover {
+            transform: translateY(-9px) scale(1.006);
+          }
+
+          .home-category-card:hover .home-category-image,
+          .home-arrival-card:hover .home-arrival-image {
+            transform: translateY(0) scale(1.055);
+          }
+
+          .home-banner-card:hover .home-banner-image {
+            transform: scale(1.045);
+          }
+
+          .home-product-sequence:hover img {
+            transform: translateY(0) scale(1.035);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .home-hero-image {
+            animation-duration: 1450ms;
+          }
+
+          .home-hero-item {
+            animation-duration: 950ms;
+          }
+
+          .home-hero-eyebrow {
+            animation-delay: 260ms;
+          }
+
+          .home-hero-title {
+            animation-delay: 460ms;
+          }
+
+          .home-hero-subtitle {
+            animation-delay: 660ms;
+          }
+
+          .home-hero-button {
+            animation-delay: 840ms;
+          }
+
+          .home-reveal {
+            transition-duration: 950ms, 1050ms;
+          }
+
+          .home-product-sequence :is(h1, h2, h3, h4) {
+            transition-delay: calc(var(--item-delay, 0ms) + 520ms);
+          }
+
+          .home-product-sequence p {
+            transition-delay: calc(var(--item-delay, 0ms) + 640ms);
+          }
+
+          .home-product-sequence span {
+            transition-delay: calc(var(--item-delay, 0ms) + 750ms);
+          }
+
+          .home-product-sequence button {
+            transition-delay: calc(var(--item-delay, 0ms) + 860ms);
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .home-page-enter,
+          .home-hero-image,
+          .home-hero-item,
           .home-reveal,
-          .home-reveal.is-visible {
+          .home-reveal.is-visible,
+          .home-heading-eyebrow,
+          .home-heading-title,
+          .home-heading-link,
+          .home-arrival-description,
+          .home-category-card,
+          .home-category-image,
+          .home-category-title,
+          .home-category-description,
+          .home-product-sequence,
+          .home-product-sequence img,
+          .home-product-sequence :is(h1, h2, h3, h4, p, span, button),
+          .home-banner-card,
+          .home-banner-image,
+          .home-banner-kicker,
+          .home-banner-title,
+          .home-banner-subtitle,
+          .home-banner-button,
+          .home-arrival-card,
+          .home-arrival-image,
+          .home-arrival-kicker,
+          .home-arrival-title,
+          .home-arrival-subtitle {
             animation: none !important;
             opacity: 1 !important;
             transform: none !important;
-            filter: none !important;
             transition: none !important;
           }
         }
       `}</style>
 
       {/* Hero */}
-      <section
-        className="relative isolate flex min-h-[580px] items-center overflow-hidden bg-slate-950 bg-cover bg-center text-white sm:min-h-[620px] lg:min-h-[680px]"
-        style={{
-          backgroundImage: `
-            linear-gradient(
-              90deg,
-              rgba(2, 6, 23, 0.92) 0%,
-              rgba(2, 6, 23, 0.74) 45%,
-              rgba(2, 6, 23, 0.12) 100%
-            ),
-            url("${settings?.heroImage || ""}")
-          `,
-        }}
-      >
+      <section className="relative isolate flex min-h-[580px] items-center overflow-hidden bg-slate-950 text-white sm:min-h-[620px] lg:min-h-[680px]">
+        <div
+          className="home-hero-image absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `
+              linear-gradient(
+                90deg,
+                rgba(2, 6, 23, 0.92) 0%,
+                rgba(2, 6, 23, 0.74) 45%,
+                rgba(2, 6, 23, 0.12) 100%
+              ),
+              url("${settings?.heroImage || ""}")
+            `,
+          }}
+        />
+
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10" />
 
         <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-tl-[160px] border-l border-t border-white/10 bg-white/[0.03]" />
 
         <div className="relative z-10 mx-auto w-full max-w-[1180px] px-5 py-20 sm:px-8 sm:py-20 lg:px-6 lg:py-24">
           <div className="max-w-[760px]">
-            <span className="inline-block border-l-2 border-[var(--store-secondary)] pl-4 text-[11px] font-black uppercase tracking-[0.28em] text-[var(--store-secondary)]">
+            <span className="home-hero-item home-hero-eyebrow inline-block border-l-2 border-[var(--store-secondary)] pl-4 text-[11px] font-black uppercase tracking-[0.28em] text-[var(--store-secondary)]">
               Universal Commerce
             </span>
 
-            <h1 className="mt-6 max-w-[800px] font-serif text-5xl font-semibold leading-[0.96] tracking-[-0.045em] text-white sm:text-6xl lg:text-[78px]">
+            <h1 className="home-hero-item home-hero-title mt-6 max-w-[800px] font-serif text-5xl font-semibold leading-[0.96] tracking-[-0.045em] text-white sm:text-6xl lg:text-[78px]">
               {settings?.heroTitle || "Discover your next favorite"}
             </h1>
 
-            <p className="mt-6 max-w-[620px] text-base leading-8 text-slate-200 sm:text-lg">
+            <p className="home-hero-item home-hero-subtitle mt-6 max-w-[620px] text-base leading-8 text-slate-200 sm:text-lg">
               {settings?.heroSubtitle}
             </p>
 
             <Link
               to="/shop"
-              className="home-secondary-button group mt-8 inline-flex min-h-14 items-center justify-center gap-3 rounded-full px-7 text-sm font-black text-white transition duration-300 hover:-translate-y-1"
+              className="home-hero-item home-hero-button home-secondary-button group mt-8 inline-flex min-h-14 items-center justify-center gap-3 rounded-full px-7 text-sm font-black text-white transition duration-500 hover:-translate-y-1"
             >
               {settings?.heroButtonText || "Shop Now"}
 
               <ArrowRight
                 size={18}
-                className="transition-transform duration-300 group-hover:translate-x-1"
+                className="transition-transform duration-500 group-hover:translate-x-1"
               />
             </Link>
           </div>
         </div>
       </section>
-
-      
 
       {/* Categories */}
       {roots.length > 0 && (
@@ -224,15 +652,17 @@ export default function Home() {
           />
 
           <div className="mt-6 grid grid-cols-3 gap-2 sm:mt-8 sm:gap-4 lg:gap-5">
-            {roots.map((category) => (
+            {roots.map((category, index) => (
               <Link
                 key={category.id}
                 to={`/shop?category=${category.id}`}
+                style={{
+                  "--item-delay": `${(index % 4) * 150}ms`,
+                }}
                 className={[
-                  "group relative isolate overflow-hidden",
+                  "home-category-card group relative isolate overflow-hidden",
                   "min-h-[155px] rounded-[16px] bg-slate-900",
                   "shadow-[0_12px_35px_rgba(15,23,42,0.12)]",
-                  "transition duration-500 hover:-translate-y-1",
                   "sm:min-h-[240px] sm:rounded-[24px]",
                   "lg:min-h-[320px] lg:rounded-[30px]",
                 ].join(" ")}
@@ -242,11 +672,7 @@ export default function Home() {
                     src={category.image}
                     alt={category.name}
                     loading="lazy"
-                    className={[
-                      "absolute inset-0 h-full w-full object-cover",
-                      "transition duration-700 ease-out",
-                      "group-hover:scale-[1.07]",
-                    ].join(" ")}
+                    className="home-category-image absolute inset-0 h-full w-full object-cover"
                   />
                 )}
 
@@ -256,7 +682,7 @@ export default function Home() {
                   className={[
                     "pointer-events-none absolute inset-2",
                     "rounded-[12px] border border-white/20",
-                    "opacity-0 transition duration-300",
+                    "opacity-0 transition duration-500",
                     "group-hover:opacity-100",
                     "sm:inset-3 sm:rounded-[18px]",
                     "lg:rounded-[22px]",
@@ -266,7 +692,7 @@ export default function Home() {
                 <div className="absolute inset-x-0 bottom-0 z-10 p-3 sm:p-5 lg:p-7">
                   <h3
                     className={[
-                      "line-clamp-2 font-serif font-semibold",
+                      "home-category-title line-clamp-2 font-serif font-semibold",
                       "text-sm leading-tight text-white",
                       "sm:text-xl",
                       "lg:text-3xl",
@@ -278,7 +704,7 @@ export default function Home() {
                   {category.description && (
                     <p
                       className={[
-                        "mt-1 hidden text-xs leading-5 text-slate-200",
+                        "home-category-description mt-1 hidden text-xs leading-5 text-slate-200",
                         "sm:line-clamp-2 sm:block",
                         "lg:mt-3 lg:text-sm lg:leading-6",
                       ].join(" ")}
@@ -306,10 +732,13 @@ export default function Home() {
             />
 
             <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-              {featured.map((product) => (
+              {featured.map((product, index) => (
                 <div
                   key={product.id}
-                  className="min-w-0 transition duration-300 hover:-translate-y-1"
+                  style={{
+                    "--item-delay": `${(index % 4) * 140}ms`,
+                  }}
+                  className="home-product-sequence min-w-0"
                 >
                   <ProductCard product={product} />
                 </div>
@@ -326,50 +755,56 @@ export default function Home() {
             <Link
               key={banner.id || index}
               to={banner.link || "/shop"}
+              style={{
+                "--item-delay": `${(index % 2) * 180}ms`,
+              }}
               className={[
                 "home-banner-card group relative isolate flex min-h-[410px] items-end overflow-hidden rounded-[30px]",
-                "bg-slate-950 bg-cover bg-center shadow-[0_24px_65px_rgba(15,23,42,0.15)]",
-                "transition duration-500 hover:-translate-y-2",
+                "bg-slate-950 shadow-[0_24px_65px_rgba(15,23,42,0.15)]",
                 index === 0 && brandingBanners.length > 1
                   ? "lg:min-h-[500px]"
                   : "lg:min-h-[450px]",
               ].join(" ")}
-              style={{
-                backgroundImage: `
-                  linear-gradient(
-                    90deg,
-                    rgba(2, 6, 23, 0.86),
-                    rgba(2, 6, 23, 0.1)
-                  ),
-                  url("${banner.image}")
-                `,
-              }}
             >
+              <div
+                className="home-banner-image absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(
+                      90deg,
+                      rgba(2, 6, 23, 0.86),
+                      rgba(2, 6, 23, 0.1)
+                    ),
+                    url("${banner.image}")
+                  `,
+                }}
+              />
+
               <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
               <span className="pointer-events-none absolute inset-3 rounded-[22px] border border-white/20" />
 
               <div className="relative z-10 max-w-xl p-7 sm:p-9">
-                <span className="text-[10px] font-black uppercase tracking-[0.24em] text-white/75">
+                <span className="home-banner-kicker text-[10px] font-black uppercase tracking-[0.24em] text-white/75">
                   Exclusive edit
                 </span>
 
-                <h2 className="mt-4 font-serif text-4xl font-semibold leading-[1.02] text-white sm:text-5xl">
+                <h2 className="home-banner-title mt-4 font-serif text-4xl font-semibold leading-[1.02] text-white sm:text-5xl">
                   {banner.title}
                 </h2>
 
                 {banner.subtitle && (
-                  <p className="mt-4 max-w-lg text-sm leading-7 text-slate-200">
+                  <p className="home-banner-subtitle mt-4 max-w-lg text-sm leading-7 text-slate-200">
                     {banner.subtitle}
                   </p>
                 )}
 
-                <span className="home-banner-button mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-black transition duration-300">
+                <span className="home-banner-button mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-black">
                   {banner.buttonText || "Explore"}
 
                   <ArrowRight
                     size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
+                    className="transition-transform duration-500 group-hover:translate-x-1"
                   />
                 </span>
               </div>
@@ -382,15 +817,15 @@ export default function Home() {
       {modelImages.length > 0 && (
         <RevealSection className="mx-auto w-full max-w-[1180px] px-5 py-12 sm:px-8 sm:py-14 lg:px-6 lg:py-16">
           <div className="flex flex-col gap-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--store-secondary)]">
+            <span className="home-heading-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-[var(--store-secondary)]">
               Campaign gallery
             </span>
 
-            <h2 className="font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] text-[var(--store-primary)] sm:text-5xl">
+            <h2 className="home-heading-title font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] text-[var(--store-primary)] sm:text-5xl">
               New Arrivals
             </h2>
 
-            <p className="max-w-2xl text-sm leading-7 text-slate-500">
+            <p className="home-arrival-description max-w-2xl text-sm leading-7 text-slate-500">
               Fresh model looks selected for this season.
             </p>
           </div>
@@ -409,10 +844,12 @@ export default function Home() {
               return (
                 <article
                   key={item.id || index}
+                  style={{
+                    "--item-delay": `${(index % 4) * 150}ms`,
+                  }}
                   className={[
-                    "group relative isolate min-h-[285px] overflow-hidden rounded-[26px] bg-slate-950",
+                    "home-arrival-card group relative isolate min-h-[285px] overflow-hidden rounded-[26px] bg-slate-950",
                     "shadow-[0_20px_55px_rgba(15,23,42,0.14)]",
-                    "transition duration-500 hover:-translate-y-1",
                     layoutClass,
                   ].join(" ")}
                 >
@@ -422,7 +859,7 @@ export default function Home() {
                       item.alt || item.title || `New arrival model ${index + 1}`
                     }
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.07]"
+                    className="home-arrival-image absolute inset-0 h-full w-full object-cover"
                   />
 
                   <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
@@ -430,13 +867,13 @@ export default function Home() {
                   <span className="pointer-events-none absolute inset-3 rounded-[18px] border border-white/15" />
 
                   <div className="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-7">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/75 sm:text-[10px]">
+                    <span className="home-arrival-kicker text-[9px] font-black uppercase tracking-[0.2em] text-white/75 sm:text-[10px]">
                       {item.kicker || "New season"}
                     </span>
 
                     <h3
                       className={[
-                        "mt-2 font-serif font-semibold text-white",
+                        "home-arrival-title mt-2 font-serif font-semibold text-white",
                         index === 0
                           ? "text-3xl sm:text-4xl"
                           : "text-xl sm:text-2xl",
@@ -446,7 +883,7 @@ export default function Home() {
                     </h3>
 
                     {item.subtitle && (
-                      <p className="mt-2 max-w-md text-sm leading-6 text-slate-200">
+                      <p className="home-arrival-subtitle mt-2 max-w-md text-sm leading-6 text-slate-200">
                         {item.subtitle}
                       </p>
                     )}
@@ -480,11 +917,15 @@ function RevealSection({ children, className = "", delay = 0, style }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        setVisible(entry.isIntersecting);
+
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(element);
+        }
       },
       {
         threshold: 0.08,
-        rootMargin: "0px 0px -6% 0px",
+        rootMargin: "0px 0px -5% 0px",
       },
     );
 
@@ -509,50 +950,28 @@ function RevealSection({ children, className = "", delay = 0, style }) {
   );
 }
 
-function BenefitItem({ icon, title, description }) {
-  return (
-    <div className="home-benefit-card group relative flex min-h-[104px] items-center gap-4 overflow-hidden rounded-[22px] border border-slate-200 bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 sm:p-5">
-      <span className="home-benefit-icon relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-2xl transition duration-300 sm:h-12 sm:w-12">
-        {icon}
-      </span>
-
-      <span className="relative z-10 min-w-0">
-        <strong className="block text-sm font-black text-slate-950">
-          {title}
-        </strong>
-
-        <small className="mt-1 block text-xs leading-5 text-slate-500">
-          {description}
-        </small>
-      </span>
-
-      <span className="pointer-events-none absolute -bottom-10 -right-10 h-24 w-24 rounded-full bg-slate-100" />
-    </div>
-  );
-}
-
 function SectionHeading({ eyebrow, title, linkText }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--store-secondary)]">
+        <span className="home-heading-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-[var(--store-secondary)]">
           {eyebrow}
         </span>
 
-        <h2 className="mt-2 font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] text-[var(--store-primary)] sm:text-5xl">
+        <h2 className="home-heading-title mt-2 font-serif text-4xl font-semibold leading-tight tracking-[-0.035em] text-[var(--store-primary)] sm:text-5xl">
           {title}
         </h2>
       </div>
 
       <Link
         to="/shop"
-        className="home-theme-link group inline-flex w-max items-center gap-2 border-b pb-1 text-sm font-black transition"
+        className="home-heading-link home-theme-link group inline-flex w-max items-center gap-2 border-b pb-1 text-sm font-black transition duration-500"
       >
         {linkText}
 
         <ArrowRight
           size={16}
-          className="transition-transform duration-300 group-hover:translate-x-1"
+          className="transition-transform duration-500 group-hover:translate-x-1"
         />
       </Link>
     </div>
