@@ -1,12 +1,14 @@
 import {
   ChevronDown,
-  Search
+  Search,
 } from 'lucide-react';
+
 import {
   useEffect,
   useMemo,
-  useState
+  useState,
 } from 'react';
+
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard';
 import { useStore } from '../../contexts/StoreContext';
@@ -14,16 +16,20 @@ import { useStore } from '../../contexts/StoreContext';
 export default function Shop() {
   const {
     publicProducts = [],
-    categories = []
+    categories = [],
   } = useStore();
 
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] =
+    useSearchParams();
 
   const query = params.get('q') || '';
-  const category = params.get('category') || '';
-  const sort = params.get('sort') || 'featured';
+  const category =
+    params.get('category') || '';
+  const sort =
+    params.get('sort') || 'featured';
 
-  const [search, setSearch] = useState(query);
+  const [search, setSearch] =
+    useState(query);
 
   useEffect(() => {
     setSearch(query);
@@ -33,25 +39,31 @@ export default function Shop() {
     () =>
       categories.find(
         item =>
-          String(item.id) === String(category)
+          String(item.id) ===
+          String(category),
       ),
-    [categories, category]
+    [categories, category],
   );
 
   /*
-   * Main category select থাকলে main category এবং
-   * তার সব subcategory-এর products দেখাবে।
+   * Main category select থাকলে:
+   * Main category এবং তার subcategory-এর product দেখাবে।
    *
-   * Subcategory select থাকলে শুধু ওই
-   * subcategory-এর products দেখাবে।
+   * Subcategory select থাকলে:
+   * শুধু selected subcategory-এর product দেখাবে।
    */
   const categoryIds = useMemo(() => {
-    if (!category || !selectedCategory) {
+    if (
+      !category ||
+      !selectedCategory
+    ) {
       return [];
     }
 
     if (selectedCategory.parentId) {
-      return [String(selectedCategory.id)];
+      return [
+        String(selectedCategory.id),
+      ];
     }
 
     return [
@@ -62,14 +74,18 @@ export default function Shop() {
           item =>
             item.active &&
             String(item.parentId) ===
-              String(selectedCategory.id)
+              String(
+                selectedCategory.id,
+              ),
         )
-        .map(item => String(item.id))
+        .map(item =>
+          String(item.id),
+        ),
     ];
   }, [
     category,
     selectedCategory,
-    categories
+    categories,
   ]);
 
   const filteredProducts = useMemo(() => {
@@ -88,29 +104,32 @@ export default function Shop() {
 
         const matchesSearch =
           searchableText.includes(
-            normalizedSearch
+            normalizedSearch,
           );
 
         const matchesCategory =
           !category ||
           categoryIds.includes(
-            String(product.categoryId)
+            String(product.categoryId),
           ) ||
           categoryIds.includes(
-            String(product.subcategoryId)
+            String(
+              product.subcategoryId,
+            ),
           );
 
         return (
-          matchesSearch && matchesCategory
+          matchesSearch &&
+          matchesCategory
         );
-      }
+      },
     );
 
     if (sort === 'price-low') {
       result = [...result].sort(
         (a, b) =>
           Number(a.price || 0) -
-          Number(b.price || 0)
+          Number(b.price || 0),
       );
     }
 
@@ -118,15 +137,19 @@ export default function Shop() {
       result = [...result].sort(
         (a, b) =>
           Number(b.price || 0) -
-          Number(a.price || 0)
+          Number(a.price || 0),
       );
     }
 
     if (sort === 'newest') {
       result = [...result].sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
+          new Date(
+            b.createdAt,
+          ).getTime() -
+          new Date(
+            a.createdAt,
+          ).getTime(),
       );
     }
 
@@ -136,11 +159,15 @@ export default function Shop() {
     search,
     category,
     categoryIds,
-    sort
+    sort,
   ]);
 
-  const updateParam = (key, value) => {
-    const next = new URLSearchParams(params);
+  const updateParam = (
+    key,
+    value,
+  ) => {
+    const next =
+      new URLSearchParams(params);
 
     if (value) {
       next.set(key, value);
@@ -152,14 +179,77 @@ export default function Shop() {
   };
 
   const handleSearch = event => {
-    const value = event.target.value;
+    const value =
+      event.target.value;
 
     setSearch(value);
-    updateParam('q', value.trim());
+
+    updateParam(
+      'q',
+      value.trim(),
+    );
   };
 
   return (
-    <main className="min-h-screen bg-[#faf9f6] pb-20 text-slate-950">
+    <main className="min-h-screen overflow-x-hidden bg-[#faf9f6] pb-20 text-slate-950">
+      <style>
+        {`
+          @keyframes categoryProductsTranslate {
+            0% {
+              opacity: 0;
+              transform: translateX(28px);
+            }
+
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          .category-products-translate {
+            animation:
+              categoryProductsTranslate
+              480ms
+              cubic-bezier(0.22, 1, 0.36, 1)
+              both;
+            will-change: transform, opacity;
+          }
+
+          @keyframes productCardTranslate {
+            0% {
+              opacity: 0;
+              transform: translateX(20px);
+            }
+
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          .product-card-translate {
+            opacity: 0;
+            animation:
+              productCardTranslate
+              450ms
+              cubic-bezier(0.22, 1, 0.36, 1)
+              forwards;
+            will-change: transform, opacity;
+          }
+
+          @media (
+            prefers-reduced-motion: reduce
+          ) {
+            .category-products-translate,
+            .product-card-translate {
+              opacity: 1;
+              animation: none;
+              transform: none;
+            }
+          }
+        `}
+      </style>
+
       <div className="mx-auto w-full max-w-[1180px] px-4 py-10 sm:px-6 sm:py-14">
         {/* Search and Sort */}
         <section className="grid gap-3 rounded-[26px] border border-slate-200 bg-white p-3 shadow-[0_20px_55px_rgba(15,23,42,0.08)] sm:p-4 md:grid-cols-[minmax(0,1fr)_220px]">
@@ -185,7 +275,7 @@ export default function Shop() {
               onChange={event =>
                 updateParam(
                   'sort',
-                  event.target.value
+                  event.target.value,
                 )
               }
               className="h-14 w-full appearance-none border-0 bg-transparent px-4 pr-11 text-sm font-bold text-slate-700 outline-none"
@@ -214,35 +304,60 @@ export default function Shop() {
           </div>
         </section>
 
-        {/* Products */}
-        {filteredProducts.length > 0 ? (
-          <section className="grid grid-cols-2 gap-3 py-8 sm:gap-5 sm:py-10 lg:grid-cols-4">
-            {filteredProducts.map(product => (
-              <div
-                key={product.id}
-                className="min-w-0"
-              >
-                <ProductCard product={product} />
+        {/*
+         * Category/subcategory change হলে key পরিবর্তন হবে।
+         * ফলে translate animation আবার চালু হবে।
+         *
+         * এখানে কোনো scroll ব্যবহার করা হয়নি।
+         */}
+        <div
+          key={
+            category ||
+            'all-products'
+          }
+          className="category-products-translate"
+        >
+          {filteredProducts.length >
+          0 ? (
+            <section className="grid grid-cols-2 gap-3 py-8 sm:gap-5 sm:py-10 lg:grid-cols-4">
+              {filteredProducts.map(
+                (product, index) => (
+                  <div
+                    key={product.id}
+                    className="product-card-translate min-w-0"
+                    style={{
+                      animationDelay: `${Math.min(
+                        index * 55,
+                        330,
+                      )}ms`,
+                    }}
+                  >
+                    <ProductCard
+                      product={product}
+                    />
+                  </div>
+                ),
+              )}
+            </section>
+          ) : (
+            <section className="mt-8 grid min-h-[380px] place-items-center rounded-[30px] border border-dashed border-slate-300 bg-white px-6 text-center">
+              <div>
+                <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-slate-400">
+                  <Search size={25} />
+                </span>
+
+                <h2 className="mt-5 font-serif text-3xl font-semibold text-slate-950">
+                  No products found
+                </h2>
+
+                <p className="mt-3 text-sm text-slate-500">
+                  Try another search or
+                  category.
+                </p>
               </div>
-            ))}
-          </section>
-        ) : (
-          <section className="mt-8 grid min-h-[380px] place-items-center rounded-[30px] border border-dashed border-slate-300 bg-white px-6 text-center">
-            <div>
-              <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-slate-400">
-                <Search size={25} />
-              </span>
-
-              <h2 className="mt-5 font-serif text-3xl font-semibold text-slate-950">
-                No products found
-              </h2>
-
-              <p className="mt-3 text-sm text-slate-500">
-                Try another search or category.
-              </p>
-            </div>
-          </section>
-        )}
+            </section>
+          )}
+        </div>
       </div>
     </main>
   );

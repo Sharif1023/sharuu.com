@@ -420,7 +420,7 @@ export default function PublicLayout() {
                     {/* Category Dropdown */}
                     {subcategories.length >
                       0 && (
-                      <div className="invisible absolute left-0 top-full z-[100] w-[260px] translate-y-3 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                      <div className="invisible absolute left-1/2 -translate-x-1/2 top-full z-[100] w-[200px] translate-y-3 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-3 shadow-[0_25px_70px_rgba(15,23,42,0.18)]">
                           <div className="relative overflow-hidden rounded-2xl bg-[var(--primary-color)] p-5 text-[var(--on-primary)]">
                             <h3 className="relative z-10 font-serif text-2xl font-bold">
