@@ -748,70 +748,191 @@ export default function Home() {
         </RevealSection>
       )}
 
-      {/* Branding Banners */}
-      {brandingBanners.length > 0 && (
-        <RevealSection className="mx-auto grid w-full max-w-[1180px] gap-4 px-5 py-12 sm:px-8 sm:py-14 lg:grid-cols-2 lg:px-6 lg:py-16">
-          {brandingBanners.map((banner, index) => (
-            <Link
-              key={banner.id || index}
-              to={banner.link || "/shop"}
-              style={{
-                "--item-delay": `${(index % 2) * 180}ms`,
-              }}
+     {/* Branding Banners */}
+{brandingBanners.length > 0 && (
+  <RevealSection
+    className={[
+      'mx-auto grid w-full max-w-[1180px]',
+      'grid-cols-2 gap-3',
+      'px-4 py-10',
+      'sm:gap-4 sm:px-8 sm:py-14',
+      'lg:grid-cols-2 lg:px-6 lg:py-16',
+    ].join(' ')}
+  >
+    {brandingBanners.map(
+      (banner, index) => (
+        <Link
+          key={banner.id || index}
+          to={banner.link || '/shop'}
+          style={{
+            '--item-delay': `${
+              (index % 2) * 180
+            }ms`,
+          }}
+          className={[
+            'home-banner-card group relative',
+            'isolate flex min-w-0 items-end',
+            'overflow-hidden bg-slate-950',
+
+            /*
+             * Mobile-এ দুইটি card পাশাপাশি থাকবে,
+             * তাই height, radius ও shadow ছোট রাখা হয়েছে।
+             */
+            'min-h-[260px] rounded-[22px]',
+            'shadow-[0_16px_40px_rgba(15,23,42,0.14)]',
+
+            'sm:min-h-[360px] sm:rounded-[26px]',
+            'sm:shadow-[0_20px_55px_rgba(15,23,42,0.15)]',
+
+            index === 0 &&
+            brandingBanners.length > 1
+              ? 'lg:min-h-[500px]'
+              : 'lg:min-h-[450px]',
+
+            'lg:rounded-[30px]',
+            'lg:shadow-[0_24px_65px_rgba(15,23,42,0.15)]',
+          ].join(' ')}
+        >
+          {/* Banner Background */}
+          <div
+            className="home-banner-image absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            style={{
+              backgroundImage: `
+                linear-gradient(
+                  90deg,
+                  rgba(2, 6, 23, 0.88),
+                  rgba(2, 6, 23, 0.16)
+                ),
+                url("${banner.image}")
+              `,
+            }}
+          />
+
+          {/* Bottom Gradient */}
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+
+          {/* Inner Border */}
+          <span
+            className={[
+              'pointer-events-none absolute',
+              'inset-2 rounded-[16px]',
+              'border border-white/20',
+              'sm:inset-3 sm:rounded-[20px]',
+              'lg:rounded-[22px]',
+            ].join(' ')}
+          />
+
+          {/* Banner Content */}
+          <div
+            className={[
+              'relative z-10 min-w-0',
+              'w-full p-4',
+              'sm:p-6',
+              'lg:max-w-xl lg:p-9',
+            ].join(' ')}
+          >
+            {/* Kicker */}
+            <span
               className={[
-                "home-banner-card group relative isolate flex min-h-[410px] items-end overflow-hidden rounded-[30px]",
-                "bg-slate-950 shadow-[0_24px_65px_rgba(15,23,42,0.15)]",
-                index === 0 && brandingBanners.length > 1
-                  ? "lg:min-h-[500px]"
-                  : "lg:min-h-[450px]",
-              ].join(" ")}
+                'home-banner-kicker',
+                'block truncate',
+                'text-[7px] font-black',
+                'uppercase tracking-[0.14em]',
+                'text-white/75',
+                'sm:text-[9px]',
+                'sm:tracking-[0.2em]',
+                'lg:text-[10px]',
+                'lg:tracking-[0.24em]',
+              ].join(' ')}
             >
-              <div
-                className="home-banner-image absolute inset-0 bg-cover bg-center"
+              Exclusive edit
+            </span>
+
+            {/* Title */}
+            <h2
+              className={[
+                'home-banner-title',
+                'mt-2 break-words font-serif',
+                'text-xl font-semibold',
+                'leading-[1.05] text-white',
+                'sm:mt-3 sm:text-3xl',
+                'lg:mt-4 lg:text-5xl',
+              ].join(' ')}
+            >
+              {banner.title}
+            </h2>
+
+            {/* Subtitle */}
+            {banner.subtitle && (
+              <p
+                className={[
+                  'home-banner-subtitle',
+                  'mt-2 overflow-hidden',
+                  'text-[10px] leading-4',
+                  'text-slate-200',
+                  'sm:mt-3 sm:text-xs',
+                  'sm:leading-5',
+                  'lg:mt-4 lg:max-w-lg',
+                  'lg:text-sm lg:leading-7',
+                ].join(' ')}
                 style={{
-                  backgroundImage: `
-                    linear-gradient(
-                      90deg,
-                      rgba(2, 6, 23, 0.86),
-                      rgba(2, 6, 23, 0.1)
-                    ),
-                    url("${banner.image}")
-                  `,
+                  display:
+                    '-webkit-box',
+
+                  WebkitBoxOrient:
+                    'vertical',
+
+                  WebkitLineClamp: 3,
                 }}
+              >
+                {banner.subtitle}
+              </p>
+            )}
+
+            {/* Button */}
+            <span
+              className={[
+                'home-banner-button',
+                'mt-4 inline-flex',
+                'max-w-full items-center',
+                'gap-1.5 rounded-full',
+                'bg-white px-3 py-2',
+                'text-[9px] font-black',
+                'text-slate-950',
+                'shadow-sm transition',
+                'duration-300',
+                'group-hover:bg-[var(--secondary-color)]',
+                'group-hover:text-[var(--on-secondary)]',
+
+                'sm:mt-5 sm:gap-2',
+                'sm:px-4 sm:py-2.5',
+                'sm:text-[11px]',
+
+                'lg:mt-6 lg:px-5',
+                'lg:py-3 lg:text-xs',
+              ].join(' ')}
+            >
+              <span className="truncate">
+                {banner.buttonText ||
+                  'Explore'}
+              </span>
+
+              <ArrowRight
+                size={15}
+                className={[
+                  'shrink-0',
+                  'transition-transform',
+                  'duration-500',
+                  'group-hover:translate-x-1',
+                ].join(' ')}
               />
-
-              <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-              <span className="pointer-events-none absolute inset-3 rounded-[22px] border border-white/20" />
-
-              <div className="relative z-10 max-w-xl p-7 sm:p-9">
-                <span className="home-banner-kicker text-[10px] font-black uppercase tracking-[0.24em] text-white/75">
-                  Exclusive edit
-                </span>
-
-                <h2 className="home-banner-title mt-4 font-serif text-4xl font-semibold leading-[1.02] text-white sm:text-5xl">
-                  {banner.title}
-                </h2>
-
-                {banner.subtitle && (
-                  <p className="home-banner-subtitle mt-4 max-w-lg text-sm leading-7 text-slate-200">
-                    {banner.subtitle}
-                  </p>
-                )}
-
-                <span className="home-banner-button mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-black">
-                  {banner.buttonText || "Explore"}
-
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-500 group-hover:translate-x-1"
-                  />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </RevealSection>
-      )}
+            </span>
+          </div>
+        </Link>
+      ),
+    )}
+  </RevealSection>
+)}
 
       {/* New Arrivals */}
       {modelImages.length > 0 && (
