@@ -1,0 +1,7 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/sharuuco/store.sharuu.com_backend"
+PassengerBaseURI "/api"
+PassengerNodejs "/home/sharuuco/nodevenv/store.sharuu.com_backend/24/bin/node"
+PassengerAppType node
+PassengerStartupFile src.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END

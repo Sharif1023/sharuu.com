@@ -29,6 +29,7 @@ import {
 
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { useStore } from '../contexts/StoreContext';
+import { getAdminLoginPath } from '../lib/utils';
 
 const navItems = [
   {
@@ -132,7 +133,7 @@ export default function AdminLayout() {
   const exit = async () => {
     await logout();
 
-    navigate('/admin/login', {
+    navigate(getAdminLoginPath(settings), {
       replace: true,
     });
   };

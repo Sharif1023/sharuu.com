@@ -26,6 +26,32 @@ export function makeId(prefix = 'id') {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+export const DEFAULT_ADMIN_LOGIN_SLUG = 'store-admin';
+
+export const RESERVED_ADMIN_LOGIN_SLUGS = new Set([
+  'admin',
+  'admin-access',
+  'shop',
+  'cart',
+  'checkout',
+  'track-order',
+  'order-success',
+  'page',
+  'product',
+]);
+
+export function getAdminLoginSlug(settings) {
+  return String(settings?.adminLoginSlug || DEFAULT_ADMIN_LOGIN_SLUG).trim() || DEFAULT_ADMIN_LOGIN_SLUG;
+}
+
+export function getAdminLoginPath(settings) {
+  return `/${getAdminLoginSlug(settings)}`;
+}
+
+export function isReservedAdminLoginSlug(slug) {
+  return RESERVED_ADMIN_LOGIN_SLUGS.has(String(slug || '').trim().toLowerCase());
+}
+
 export function selectedOptionLabels(product, selectedOptions = {}) {
   return Object.entries(selectedOptions).reduce((result, [optionId, value]) => {
     const option = product?.options?.find(item => item.id === optionId);
