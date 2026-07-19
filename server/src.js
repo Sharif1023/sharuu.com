@@ -28,6 +28,6 @@ app.get('/api/health', async (_request, response) => { await pool.query('SELECT 
 app.use('/api/public', publicRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
-if (env.nodeEnv === 'production') { const dist = path.resolve(rootDir, '../dist'); app.use(express.static(dist)); app.get('*', (_request, response) => response.sendFile(path.join(dist, 'index.html'))); } else { app.use(notFound); }
+if (env.nodeEnv === 'production') { const dist = path.resolve(rootDir, 'dist'); app.use(express.static(dist)); app.get('*', (_request, response) => response.sendFile(path.join(dist, 'index.html'))); } else { app.use(notFound); }
 app.use(errorHandler);
 app.listen(env.port, () => console.log(`Sharuu API running on http://localhost:${env.port}`));
